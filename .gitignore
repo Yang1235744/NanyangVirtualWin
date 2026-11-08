@@ -19,8 +19,9 @@ app/src/main/java/com/nanyang/virtualwin/R.java
 app/src/main/jni/libs/
 app/src/main/jni/obj/
 
-# Debug APKs
+# Debug APKs (except official website download)
 *.apk
+!docs/*.apk
 *.aab
 
 # Large binary distributions (exceed GitHub 100MB limit)
