@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>南阳虚拟Win — Android手机上的Windows虚拟机</title>
+  <meta name="description" content="南阳虚拟Win是专为Android手机打造的Windows虚拟机应用，支持UEFI/传统双BIOS、TPM 2.0、ARM原生与x86模拟，一键运行Windows系统。" />
+  <meta name="keywords" content="南阳虚拟win,Nanyang Virtual Win,Android虚拟机,手机跑Windows,QEMU,虚拟Win,ARM Windows,手机电脑" />
+  <meta name="author" content="NanyangVirtualWin Team" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="南阳虚拟Win — Android手机上的Windows虚拟机" />
+  <meta property="og:description" content="在手机上运行Windows！支持UEFI/SeaBIOS、TPM 2.0、ARM/x86双架构、OTG USB直通，芯片级专属优化。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://yang1235744.github.io/NanyangVirtualWin/" />
+  <meta property="og:image" content="https://yang1235744.github.io/NanyangVirtualWin/og-image.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="南阳虚拟Win" />
+  <meta name="twitter:description" content="在Android手机上运行Windows虚拟机，支持多种架构与芯片优化。" />
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230a1628' width='100' height='100' rx='20'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='%2300d4ff' font-family='Arial'%3EW%3C/text%3E%3C/svg%3E" />
+
+  <style>
+    /* ═══════════ RESET & BASE ═══════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: #0a1628;
+      color: #e0e8f0;
+      font-family: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ═══════════ NAVBAR ═══════════ */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px; height: 64px;
+      background: rgba(10, 22, 40, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+      transition: background 0.3s;
+    }
+    .navbar.scrolled { background: rgba(10, 22, 40, 0.97); }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.2rem; letter-spacing: 0.5px;
+    }
+    .nav-logo-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: linear-gradient(135deg, #00d4ff, #0066ff);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 18px; color: #fff;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-size: 0.9rem; color: #8899aa; transition: color 0.25s;
+      position: relative;
+    }
+    .nav-links a:hover { color: #00d4ff; }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 2px; background: #00d4ff; transition: width 0.3s;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-download-btn {
+      padding: 8px 22px; border-radius: 20px; font-size: 0.85rem;
+      background: linear-gradient(135deg, #00d4ff, #0066ff);
+      color: #fff; font-weight: 600; border: none; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .nav-download-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,212,255,0.4); }
+
+    /* ═══════════ HERO ═══════════ */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; padding: 80px 48px 60px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,102,255,0.15) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 20%, rgba(0,212,255,0.08) 0%, transparent 60%);
+    }
+    /* grid lines */
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    }
+    .hero-content {
+      position: relative; z-index: 1; text-align: center; max-width: 800px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 20px; font-size: 0.78rem;
+      background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25);
+      color: #00d4ff; margin-bottom: 28px;
+      animation: fadeInDown 0.8s ease both;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #00d4ff; animation: pulse 2s infinite;
+    }
+    .hero-title {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800; line-height: 1.15;
+      margin-bottom: 20px;
+      animation: fadeInUp 0.8s ease 0.15s both;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, #00d4ff, #0088ff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.15rem; color: #8899aa; max-width: 560px; margin: 0 auto 40px;
+      animation: fadeInUp 0.8s ease 0.3s both;
+    }
+    .hero-buttons {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease 0.45s both;
+    }
+    .btn-primary {
+      padding: 14px 36px; border-radius: 28px; font-size: 1rem; font-weight: 600;
+      background: linear-gradient(135deg, #00d4ff, #0066ff); color: #fff;
+      border: none; cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 4px 24px rgba(0,102,255,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,102,255,0.5); }
+    .btn-secondary {
+      padding: 14px 36px; border-radius: 28px; font-size: 1rem; font-weight: 600;
+      background: transparent; color: #c0d0e0;
+      border: 1px solid rgba(255,255,255,0.15); cursor: pointer; transition: all 0.25s;
+    }
+    .btn-secondary:hover { border-color: #00d4ff; color: #00d4ff; }
+    .hero-stats {
+      display: flex; gap: 48px; justify-content: center; margin-top: 64px;
+      animation: fadeInUp 0.8s ease 0.6s both;
+    }
+    .hero-stat-num { font-size: 1.8rem; font-weight: 700; color: #00d4ff; }
+    .hero-stat-label { font-size: 0.8rem; color: #556677; margin-top: 4px; }
+
+    /* Floating phone mockup */
+    .hero-phone {
+      position: absolute; right: -60px; top: 50%; transform: translateY(-50%);
+      width: 260px; opacity: 0.12; z-index: 0; pointer-events: none;
+    }
+
+    /* ═══════════ SECTION COMMON ═══════════ */
+    section { padding: 100px 48px; position: relative; }
+    .section-label {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 2px; color: #00d4ff;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700;
+      margin-bottom: 16px; line-height: 1.2;
+    }
+    .section-desc {
+      font-size: 1.05rem; color: #7788aa; max-width: 560px; margin-bottom: 56px;
+    }
+    .text-center { text-align: center; }
+    .text-center .section-desc { margin-left: auto; margin-right: auto; }
+
+    /* Reveal animation */
+    .reveal {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ═══════════ FEATURES ═══════════ */
+    .features { background: linear-gradient(180deg, #0a1628 0%, #0d1f35 100%); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px; max-width: 1100px; margin: 0 auto;
+    }
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; padding: 32px 28px;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0,212,255,0.3);
+      box-shadow: 0 8px 40px rgba(0,212,255,0.08);
+    }
+    .feature-icon {
+      width: 52px; height: 52px; border-radius: 12px; margin-bottom: 20px;
+      background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,102,255,0.15));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; }
+    .feature-card p { font-size: 0.9rem; color: #7788aa; line-height: 1.65; }
+
+    /* ═══════════ SHOWCASE / HOW IT WORKS ═══════════ */
+    .showcase { overflow: hidden; }
+    .showcase-track {
+      display: flex; gap: 24px;
+      animation: scrollLeft 40s linear infinite;
+      width: max-content;
+    }
+    .showcase-track:hover { animation-play-state: paused; }
+    .showcase-item {
+      flex-shrink: 0; width: 320px; border-radius: 16px; overflow: hidden;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+      aspect-ratio: 9/16; display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .showcase-item::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(10,22,40,0.9) 100%);
+    }
+    .showcase-item span {
+      position: relative; z-index: 1; font-size: 0.9rem; color: #8899aa;
+      padding: 16px; text-align: center;
+    }
+    /* Screen mockup placeholder gradient */
+    .screen-placeholder {
+      width: 100%; height: 100%;
+      background:
+        linear-gradient(135deg, #0d1f35 0%, #162d50 50%, #0d1f35 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; opacity: 0.3;
+    }
+
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ═══════════ SPECS TABLE ═══════════ */
+    .specs { background: #0d1f35; }
+    .specs-table {
+      max-width: 760px; margin: 0 auto;
+      border-collapse: collapse; width: 100%;
+    }
+    .specs-table tr { border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .specs-table td { padding: 16px 20px; font-size: 0.95rem; }
+    .specs-table td:first-child { color: #556677; width: 200px; }
+    .specs-table td:last-child { color: #c0d0e0; }
+    .specs-table tr:hover { background: rgba(0,212,255,0.03); }
+
+    /* ═══════════ CTA / DOWNLOAD ═══════════ */
+    .cta-section {
+      text-align: center;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,102,255,0.12) 0%, transparent 70%),
+        #0a1628;
+    }
+    .cta-section .section-title { margin-bottom: 12px; }
+    .cta-section .section-desc { margin-bottom: 40px; }
+    .download-card {
+      display: inline-flex; flex-direction: column; align-items: center; gap: 12px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 20px; padding: 32px 48px;
+    }
+    .download-card .version { font-size: 0.8rem; color: #556677; }
+    .download-card .size { font-size: 0.8rem; color: #556677; }
+    .btn-download-big {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 48px; border-radius: 30px; font-size: 1.05rem; font-weight: 700;
+      background: linear-gradient(135deg, #00d4ff, #0066ff); color: #fff;
+      border: none; cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 4px 32px rgba(0,102,255,0.4);
+    }
+    .btn-download-big:hover {
+      transform: scale(1.04); box-shadow: 0 8px 48px rgba(0,102,255,0.6);
+    }
+    .download-note { font-size: 0.78rem; color: #445566; margin-top: 16px; }
+
+    /* ═══════════ FOOTER ═══════════ */
+    footer {
+      padding: 48px; text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.82rem; color: #445566;
+    }
+    footer a { color: #00d4ff; }
+    footer .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; }
+
+    /* ═══════════ ANIMATIONS ═══════════ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.5); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* ═══════════ RESPONSIVE ═══════════ */
+    @media (max-width: 768px) {
+      .navbar { padding: 0 20px; }
+      .nav-links { display: none; }
+      section { padding: 72px 20px; }
+      .hero { padding: 100px 20px 60px; }
+      .hero-stats { gap: 24px; }
+      .hero-phone { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .download-card { padding: 24px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────── -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">W</div>
+    <span>南阳虚拟Win</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">功能特性</a></li>
+    <li><a href="#specs">技术规格</a></li>
+    <li><a href="https://github.com/Yang1235744/NanyangVirtualWin" target="_blank">GitHub</a></li>
+  </ul>
+  <a class="nav-download-btn" href="#download">免费下载</a>
+</nav>
+
+<!-- ─── HERO ───────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      v1.0.0 · Android 8.0+ · arm64-v8a
+    </div>
+    <h1 class="hero-title">
+      把 Windows<br /><span>装进你的手机</span>
+    </h1>
+    <p class="hero-sub">
+      南阳虚拟Win —— 专为 Android 手机打造的 Windows 虚拟机应用。<br>
+      UEFI / SeaBIOS 双 BIOS · TPM 2.0 · ARM 原生 · OTG USB 直通
+    </p>
+    <div class="hero-buttons">
+      <a class="btn-primary" href="#download">立即下载</a>
+      <a class="btn-secondary" href="https://github.com/Yang1235744/NanyangVirtualWin" target="_blank">查看源码</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">4</div><div class="hero-stat-label">CPU 核心</div></div>
+      <div><div class="hero-stat-num">4GB</div><div class="hero-stat-label">内存分配</div></div>
+      <div><div class="hero-stat-num">32GB</div><div class="hero-stat-label">虚拟磁盘</div></div>
+      <div><div class="hero-stat-num">2.0</div><div class="hero-stat-label">TPM 支持</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ───────────────────────────── -->
+<section class="features" id="features">
+  <div class="text-center reveal">
+    <span class="section-label">核心能力</span>
+    <h2 class="section-title">为什么选择南阳虚拟Win？</h2>
+    <p class="section-desc">从芯片底层到用户交互，每一个细节都为手机端 Windows 体验精心设计。</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <div class="feature-icon">🔧</div>
+      <h3>UEFI / SeaBIOS 双 BIOS</h3>
+      <p>支持现代 UEFI 启动与传统 Legacy BIOS，灵活适配不同 Windows 镜像需求。</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🛡️</div>
+      <h3>TPM 2.0 完整支持</h3>
+      <p>内置软件 TPM 2.0 模拟器，满足 Windows 11 安装要求的可信平台模块验证。</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">📱</div>
+      <h3>ARM 原生 + x86 模拟</h3>
+      <p>骁龙/联发科/麒麟芯片原生 ARM64 运行；x86 软件通过 QEMU TCG 指令集模拟运行。</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🔌</div>
+      <h3>OTG USB 设备直通</h3>
+      <p>插入 U盘或外设后自动识别，驱动直接穿透至虚拟机内部，即插即用。</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">💾</div>
+      <h3>VMDK 磁盘格式</h3>
+      <p>原生支持 VMware VMDK 薄置备磁盘，兼容主流虚拟化产品生成的虚拟硬盘。</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">⚡</div>
+      <h3>芯片专属性能优化</h3>
+      <p>针对高通 Krait/Cortex-A、联发科 Helio/Dimensity、华为麒麟自动适配 CPU 模型与加速器参数。</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🔒</div>
+      <h3>ISO 镜像 SHA-256 验签</h3>
+      <p>加载 ISO 时自动比对哈希值，确保镜像未被篡改，保障系统纯净安全。</p>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-icon">🔋</div>
+      <h3>电量监控与后台管理</h3>
+      <p>实时显示电池状态与温度，虚拟机运行时自动申请忽略电池优化限制。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SHOWCASE MARQUEE ──────────────────── -->
+<section class="showcase" style="padding: 60px 0; overflow: hidden;">
+  <div class="showcase-track">
+    <!-- 8 duplicate items for seamless loop -->
+    <div class="showcase-item"><div class="screen-placeholder">🪟</div><span>Windows 11 ARM 桌面环境</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">⚙️</div><span>VM 配置向导界面</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">🖥️</div><span>运行中的 Windows 虚拟机</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">🔧</div><span>OTG USB 设备连接</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">📊</div><span>实时监控面板</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">🌐</div><span>网络桥接 / NAT 模式</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">🛡️</div><span>TPM 安全启动认证</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">💿</div><span>ISO 镜像加载与校验</span></div>
+    <!-- Duplicate set -->
+    <div class="showcase-item"><div class="screen-placeholder">🪟</div><span>Windows 11 ARM 桌面环境</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">⚙️</div><span>VM 配置向导界面</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">🖥️</div><span>运行中的 Windows 虚拟机</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">🔧</div><span>OTG USB 设备连接</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">📊</div><span>实时监控面板</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">🌐</div><span>网络桥接 / NAT 模式</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">🛡️</div><span>TPM 安全启动认证</span></div>
+    <div class="showcase-item"><div class="screen-placeholder">💿</div><span>ISO 镜像加载与校验</span></div>
+  </div>
+</section>
+
+<!-- ─── SPECS ──────────────────────────────── -->
+<section class="specs" id="specs">
+  <div class="text-center reveal">
+    <span class="section-label">技术规格</span>
+    <h2 class="section-title">系统要求与支持范围</h2>
+    <p class="section-desc" style="margin-bottom:48px">了解更多细节，帮助你判断自己的设备是否适合运行。</p>
+  </div>
+  <table class="specs-table reveal">
+    <tr><td>操作系统</td><td>Android 8.0 (API 26) 及以上</td></tr>
+    <tr><td>处理器架构</td><td>arm64-v8a（骁龙 / 联发科 / 麒麟）</td></tr>
+    <tr><td>BIOS 固件</td><td>UEFI (OVMF) / SeaBIOS（可选）</td></tr>
+    <tr><td>TPM 版本</td><td>TPM 2.0（软件模拟）</td></tr>
+    <tr><td>虚拟磁盘格式</td><td>VMware VMDK（薄置备）</td></tr>
+    <tr><td>网络模式</td><td>NAT / 桥接 / 无网络</td></tr>
+    <tr><td>USB 支持</td><td>OTG 设备直通（需授权）</td></tr>
+    <tr><td>最低内存需求</td><td>2 GB RAM（推荐 4 GB+）</td></tr>
+    <tr><td>最低磁盘空间</td><td>10 GB 可用空间</td></tr>
+    <tr><td>引擎</td><td>QEMU-system-arm / qemu-system-x86_64 (TCG)</td></tr>
+  </table>
+</section>
+
+<!-- ─── CTA / DOWNLOAD ───────────────────── -->
+<section class="cta-section" id="download">
+  <div class="reveal">
+    <span class="section-label">立即下载</span>
+    <h2 class="section-title">开始你的移动端 Windows 之旅</h2>
+    <p class="section-desc">免费版，无需root，安装后即可创建并运行你的第一个 Windows 虚拟机。</p>
+    <div class="download-card">
+      <span class="version">南阳虚拟Win v1.0.0 · Debug</span>
+      <a class="btn-download-big" href="https://github.com/Yang1235744/NanyangVirtualWin/releases/download/v1.0.0/app-debug.apk" download>
+        ⬇ 下载 APK
+      </a>
+      <span class="size">文件大小：约 12 MB &nbsp;·&nbsp; 架构：arm64-v8a</span>
+    </div>
+    <p class="download-note">下载后请在「设置 → 安全」中允许未知来源应用安装</p>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────── -->
+<footer>
+  <div class="footer-links">
+    <a href="https://github.com/Yang1235744/NanyangVirtualWin" target="_blank">GitHub 仓库</a>
+    <a href="#features">功能特性</a>
+    <a href="#specs">技术规格</a>
+    <a href="#download">下载</a>
+  </div>
+  <p>&copy; 2026 南阳虚拟Win · NanyangVirtualWin Team · Powered by QEMU + Android</p>
+</footer>
+
+<!-- ─── SCRIPTS ────────────────────────────── -->
+<script>
+  // Navbar scroll effect
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Intersection Observer for reveal animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>
