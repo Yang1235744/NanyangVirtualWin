@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">南阳虚拟Win</string>
+
+    <!-- 主界面 -->
+    <string name="my_vms">我的虚拟机</string>
+    <string name="no_vm_hint">还没有虚拟机\n点击右下角 + 新建一个</string>
+    <string name="btn_new_vm">新建虚拟机</string>
+    <string name="btn_settings">设置</string>
+    <string name="vm_running">运行中</string>
+    <string name="vm_stopped">已停止</string>
+    <string name="vm_paused">已暂停</string>
+    <string name="btn_start">启动</string>
+    <string name="btn_stop">停止</string>
+    <string name="btn_pause">暂停</string>
+    <string name="btn_delete">删除</string>
+    <string name="btn_edit">编辑</string>
+    <string name="btn_connect_usb">连接USB设备</string>
+
+    <!-- VM详情页 -->
+    <string name="vm_detail">虚拟机详情</string>
+    <string name="cpu_cores">CPU核心</string>
+    <string name="memory_mb">%s MB 内存</string>
+    <string name="disk_size">磁盘 %s</string>
+    <string name="bios_type">BIOS类型</string>
+    <string name="network_mode">网络模式</string>
+    <string name="tpm_enabled">TPM 2.0</string>
+    <string name="tpm_disabled">无TPM</string>
+
+    <!-- 新建向导 -->
+    <string name="new_vm_title">新建虚拟机</string>
+    <string name="step_info">基本信息</string>
+    <string name="step_config">配置参数</string>
+    <string name="step_disk">磁盘与镜像</string>
+    <string name="step_network">网络设置</string>
+    <string name="step_finish">完成</string>
+    <string name="vm_name_label">虚拟机名称</string>
+    <string name="vm_icon_label">应用图标</string>
+    <string name="icon_placeholder">选择图标</string>
+    <string name="arch_arm">ARM（芯片直跑）</string>
+    <string name="arch_x86">x86/x64（软件模拟）</string>
+    <string name="bios_uefi">UEFI（推荐）</string>
+    <string name="bios_legacy">传统 BIOS</string>
+    <string name="enable_tpm">启用 TPM 2.0</string>
+    <string name="cpu_count">CPU 核心数</string>
+    <string name="ram_amount">内存大小</string>
+    <string name="vm_disk_gb">%s GB 虚拟硬盘</string>
+    <string name="network_bridge">桥接（共享主机网络）</string>
+    <string name="network_nat">NAT（隔离上网）</string>
+    <string name="network_none">不联网</string>
+    <string name="iso_path">ISO 镜像路径</string>
+    <string name="select_iso">选择 ISO</string>
+    <string name="vmdk_path">VMware 磁盘路径</string>
+    <string name="create_vmdk">创建新 VMware 磁盘</string>
+    <string name="next">下一步</string>
+    <string name="prev">上一步</string>
+    <string name="create">创建</string>
+    <string name="confirm_delete_vm">确认删除虚拟机 \"%s\"？\n此操作不可恢复。</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确认</string>
+    <string name="saving">保存中…</string>
+    <string name="creating_vm">正在创建虚拟机…</string>
+    <string name="vm_created_success">虚拟机创建成功</string>
+    <string name="vm_creation_failed">创建失败，请检查配置</string>
+
+    <!-- 设置页 -->
+    <string name="settings_title">软件设置</string>
+    <string name="section_general">常规</string>
+    <string name="section_performance">性能优化</string>
+    <string name="section_about">关于</string>
+    <string name="default_cpu_cores">默认 CPU 核心数</string>
+    <string name="default_memory">默认内存 (MB)</string>
+    <string name="chip_optimization">芯片专属优化</string>
+    <string name="chip_qcom">高通骁龙 — 全速优先</string>
+    <string name="chip_mtk">联发科天玑 — 流畅优先</string>
+    <string name="chip_hisilicon">麒麟 — 平衡优化</string>
+    <string name="disable_battery_opt">忽略电池优化（保活）</string>
+    <string name="auto_update_check">自动检查更新</string>
+    <string name="signature_verify">镜像签名认证</string>
+    <string name="about_version">版本 %s</string>
+    <string name="about_desc">支持 ARM 原生 / x86 模拟双重架构\nUEFI + 传统 BIOS / TPM 2.0\nOTG USB 直通 · VMware 磁盘格式</string>
+    <string name="app_version">1.0.0</string>
+</resources>

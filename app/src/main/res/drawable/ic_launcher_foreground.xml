@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 南阳虚拟Win 启动图标（前景）：深蓝色 Windows Logo -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <path
+      android:fillColor="#9ABAFF"
+      android:pathData="M24,24 L50,24 L50,50 L24,50 Z M54,24 L84,24 L84,50 L54,50 Z M24,54 L50,54 L50,84 L24,84 Z M54,54 L84,54 L84,84 L54,84 Z"/>
+</vector>

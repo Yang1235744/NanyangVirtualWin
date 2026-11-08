@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- USB设备过滤器：Mass Storage类 -->
+    <usb-device class="08" subclass="06" protocol="50" />
+    <!-- 通用U盘 -->
+    <usb-device class="08" subclass="06" />
+</resources>

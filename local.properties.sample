@@ -1,0 +1,5 @@
+# Generated signing config - replace placeholders before release build
+storeFile=../nanyang-virtual-win.keystore
+storePassword=CHANGE_ME
+keyAlias=nanyang
+keyPassword=CHANGE_ME

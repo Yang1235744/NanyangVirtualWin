@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Step 4：网络设置 -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/network_mode"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_marginBottom="12dp" />
+
+    <RadioGroup
+        android:id="@+id/rgNetwork"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbBridge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/network_bridge"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/rbNat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/network_nat" />
+
+        <RadioButton
+            android:id="@+id/rbNone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/network_none" />
+
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="网络诊断"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvNetworkStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="检查中…"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+</LinearLayout>

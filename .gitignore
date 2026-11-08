@@ -1,0 +1,28 @@
+# Build configuration
+build/
+.gradle/
+
+# Local configuration (signing keys)
+local.properties
+app/signing.properties
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Generated files
+app/src/main/java/com/nanyang/virtualwin/BuildConfig.java
+app/src/main/java/com/nanyang/virtualwin/R.java
+
+# Native build artifacts
+app/src/main/jni/libs/
+app/src/main/jni/obj/
+
+# Debug APKs
+*.apk
+*.aab
+
+# Large binary distributions (exceed GitHub 100MB limit)
+gradle-*.zip
+gradle/wrapper/*.jar
